@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardFooter } from "./components/ui/card";
 import { Button, IconButton } from "./components/ui/button";
+import { Badge } from "./components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeProvider, ThemeToggle } from "./components/theme/theme-provider";
 import { ProjectCard } from "./components/projects/project-card";
+import { SkillBadge } from "./components/skills/skill-badge";
+import { ContactForm } from "./components/contact/contact-form";
+import { Timeline } from "./components/experience/timeline";
 import { projects } from "./data/projects";
 import { skills } from "./data/skills";
 import { experience } from "./data/experience";
