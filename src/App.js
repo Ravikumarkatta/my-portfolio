@@ -55,6 +55,9 @@ function App() {
               <a href="https://ravikumarkatta.github.io/Fitness" target="_blank" rel="noopener noreferrer">
                 <Button>Live Demo</Button>
               </a>
+              <a href="https://github.com/yourusername/movie-app" className="ml-4 text-sm text-blue-600" target="_blank" rel="noopener noreferrer">
+                GitHub ↗
+              </a>
             </Card>
           </div>
         </section>
