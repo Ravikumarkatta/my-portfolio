@@ -190,7 +190,7 @@ function App() {
       description: "A responsive website for a fitness center with animated scroll effects, membership management, and modern design.",
       tags: ["HTML", "CSS", "JavaScript", "GSAP Animation"],
       demoLink: "https://ravikumarkatta.github.io/Fitness",
-      githubLink: "https://github.com/yourusername/fitness-landing",
+      githubLink: "https://ravikumarkatta.github.io/Fitness",
       image: "/api/placeholder/600/300"
     },
     {
@@ -198,7 +198,7 @@ function App() {
       description: "A dashboard to monitor CI/CD pipelines, cloud resources, and automated deployment status across multiple environments.",
       tags: ["React", "Node.js", "Docker", "Jenkins API"],
       demoLink: "https://devops-dashboard.example.com",
-      githubLink: "https://github.com/yourusername/devops-dashboard",
+      githubLink: "https://github.com/ravikumarkatta/devops-dashboard",
       image: "/api/placeholder/600/300"
     }
   ];
@@ -307,7 +307,7 @@ function App() {
             </div>
             
             <div className="flex space-x-4 mt-8">
-              <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors">
+              <a href="https://github.com/ravikumarkatta" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors">
                 <GitHub size={24} />
               </a>
               <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors">
@@ -409,7 +409,7 @@ function App() {
                 </div>
                 
                 <div className="flex justify-center space-x-4">
-                  <Button variant="secondary" href="https://github.com/yourusername" icon={<GitHub size={16} />}>
+                  <Button variant="secondary" href="https://github.com/ravikumarkatta" icon={<GitHub size={16} />}>
                     GitHub
                   </Button>
                   <Button variant="secondary" href="https://linkedin.com/in/yourusername" icon={<Linkedin size={16} />}>
@@ -548,7 +548,7 @@ function App() {
                   <GitHub className="mr-4 text-indigo-600 dark:text-indigo-400" />
                   <div>
                     <p className="font-medium">GitHub</p>
-                    <a href="https://github.com/yourusername" className="text-indigo-600 dark:text-indigo-400 hover:underline">
+                    <a href="https://github.com/ravikumarkatta" className="text-indigo-600 dark:text-indigo-400 hover:underline">
                       github.com/ravikumarkatta
                     </a>
                   </div>
