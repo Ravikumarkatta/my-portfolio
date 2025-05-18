@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Moon, Sun, ExternalLink, GithubIcon as GitHub, Linkedin, Mail, Download } from "lucide-react";
+import { Moon, Sun, ExternalLink, Github as GitHub, Linkedin, Mail, Download, Code, Briefcase, Award, Globe, Server, Database } from "lucide-react";
 
 // Custom Button component with variants
 const Button = ({ children, variant = "primary", href, icon, onClick, className = "" }) => {
@@ -38,16 +38,19 @@ const Card = ({ children, className = "" }) => (
   </div>
 );
 
-// Project Card component
+// Project Card component with improved hover animation
 const ProjectCard = ({ title, description, tags, demoLink, githubLink, image }) => (
   <Card className="flex flex-col h-full hover:scale-[1.02] group">
     {image && (
-      <div className="h-48 mb-4 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
+      <div className="h-48 mb-4 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700 relative">
         <img 
           src={image} 
           alt={title} 
           className="w-full h-full object-cover object-center group-hover:scale-110 transition-all duration-500"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+          <h4 className="text-white font-medium">{title}</h4>
+        </div>
       </div>
     )}
     <h3 className="text-xl font-bold mb-2 text-gray-800 dark:text-white">{title}</h3>
@@ -81,8 +84,18 @@ const ProjectCard = ({ title, description, tags, demoLink, githubLink, image }) 
   </Card>
 );
 
-// Skill Badge component
+// Skill Badge component with animated progression
 const SkillBadge = ({ name, level }) => {
+  const [animate, setAnimate] = useState(false);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimate(true);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
   const getWidth = () => {
     switch(level) {
       case 'expert': return 'w-full';
@@ -100,23 +113,37 @@ const SkillBadge = ({ name, level }) => {
         <span className="text-sm text-gray-500 dark:text-gray-400 capitalize">{level}</span>
       </div>
       <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-        <div className={`h-full bg-gradient-to-r from-indigo-500 to-purple-600 ${getWidth()}`}></div>
+        <div 
+          className={`h-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-1000 ease-out ${getWidth()} ${animate ? 'w-full' : 'w-0'}`}
+          style={{ width: animate ? undefined : '0', transitionProperty: 'width' }}
+        ></div>
       </div>
     </div>
   );
 };
 
-// Timeline Item component
+// Timeline Item component with enhanced styling
 const TimelineItem = ({ year, title, company, description }) => (
-  <div className="relative pl-8 pb-8 border-l border-gray-300 dark:border-gray-700">
-    <div className="absolute left-[-8px] bg-indigo-600 rounded-full w-4 h-4 border-4 border-white dark:border-gray-900"></div>
+  <div className="relative pl-8 pb-8 border-l border-gray-300 dark:border-gray-700 group">
+    <div className="absolute left-[-8px] bg-indigo-600 rounded-full w-4 h-4 border-4 border-white dark:border-gray-900 group-hover:scale-125 transition-transform duration-300"></div>
     <span className="inline-block px-2 py-1 rounded bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300 text-xs font-semibold mb-2">
       {year}
     </span>
-    <h3 className="font-bold text-lg">{title}</h3>
+    <h3 className="font-bold text-lg group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{title}</h3>
     <p className="text-gray-600 dark:text-gray-400 mb-1">{company}</p>
     <p className="text-gray-600 dark:text-gray-300">{description}</p>
   </div>
+);
+
+// Service Card component
+const ServiceCard = ({ icon: Icon, title, description }) => (
+  <Card className="group hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors duration-300">
+    <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg inline-block mb-4 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-200 dark:group-hover:bg-indigo-800/40 transition-colors">
+      <Icon size={24} />
+    </div>
+    <h3 className="text-xl font-bold mb-2 text-gray-800 dark:text-white">{title}</h3>
+    <p className="text-gray-600 dark:text-gray-300">{description}</p>
+  </Card>
 );
 
 // Main app component
@@ -124,8 +151,21 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Handle dark mode toggle
+  useEffect(() => {
+    // Check user preference
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setDarkMode(prefersDark);
+    
+    if (prefersDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -170,66 +210,107 @@ function App() {
 
   const projects = [
     {
-      title: "Movie Search App",
-      description: "React app using TMDB API to search movies with a responsive UI, filtering, and watchlist functionality.",
-      tags: ["React", "API Integration", "Tailwind CSS", "JavaScript"],
-      demoLink: "https://your-movie-app.vercel.app",
-      githubLink: "https://github.com/yourusername/movie-app",
+      title: "E-Commerce Platform",
+      description: "Full-stack e-commerce app with React, Next.js, and Stripe integration featuring cart functionality, user authentication, and a responsive design.",
+      tags: ["React", "Next.js", "Stripe", "MongoDB", "Tailwind CSS"],
+      demoLink: "https://ecommerce-ravi.vercel.app",
+      githubLink: "https://github.com/ravikumarkatta/ecommerce-platform",
       image: "/api/placeholder/600/300"
     },
     {
-      title: "AWS S3 Static Site",
-      description: "A portfolio deployed on AWS S3 with CloudFront CDN, Route53 for DNS, and secured with AWS Certificate Manager.",
-      tags: ["AWS", "CloudFront", "S3", "IaC", "Terraform"],
-      demoLink: "https://your-s3-site.aws.amazon.com",
-      githubLink: "https://github.com/yourusername/aws-static-site",
+      title: "AWS Serverless API",
+      description: "Scalable REST API built with AWS Lambda, API Gateway, and DynamoDB using the Serverless Framework with CI/CD automation.",
+      tags: ["AWS Lambda", "DynamoDB", "API Gateway", "Serverless", "CI/CD"],
+      demoLink: "https://api-docs.example.com",
+      githubLink: "https://github.com/ravikumarkatta/serverless-api",
       image: "/api/placeholder/600/300"
     },
     {
-      title: "Fitness Landing Page",
-      description: "A responsive website for a fitness center with animated scroll effects, membership management, and modern design.",
-      tags: ["HTML", "CSS", "JavaScript", "GSAP Animation"],
-      demoLink: "https://ravikumarkatta.github.io/Fitness",
-      githubLink: "https://ravikumarkatta.github.io/Fitness",
+      title: "Real-time Chat Application",
+      description: "Modern chat app with WebSockets for real-time messaging, featuring user authentication, message history, and room management.",
+      tags: ["WebSockets", "React", "Node.js", "MongoDB", "Socket.io"],
+      demoLink: "https://chat-app.ravikumarkatta.com",
+      githubLink: "https://github.com/ravikumarkatta/real-time-chat",
       image: "/api/placeholder/600/300"
     },
     {
-      title: "DevOps Dashboard",
-      description: "A dashboard to monitor CI/CD pipelines, cloud resources, and automated deployment status across multiple environments.",
-      tags: ["React", "Node.js", "Docker", "Jenkins API"],
+      title: "CI/CD Pipeline Dashboard",
+      description: "Interactive dashboard for monitoring multi-environment deployments with real-time status updates and alerting system.",
+      tags: ["React", "Docker", "Jenkins", "GitHub Actions", "GraphQL"],
       demoLink: "https://devops-dashboard.example.com",
-      githubLink: "https://github.com/ravikumarkatta/devops-dashboard",
+      githubLink: "https://github.com/ravikumarkatta/cicd-dashboard",
+      image: "/api/placeholder/600/300"
+    },
+    {
+      title: "Microservices Architecture",
+      description: "Scalable microservices system with Kubernetes, service discovery, and distributed logging using the ELK stack.",
+      tags: ["Kubernetes", "Docker", "Microservices", "ELK Stack", "Go"],
+      demoLink: "https://microservices-demo.example.com",
+      githubLink: "https://github.com/ravikumarkatta/microservices-demo",
+      image: "/api/placeholder/600/300"
+    },
+    {
+      title: "Progressive Web App",
+      description: "Feature-rich PWA with offline support, push notifications and performance optimizations scoring 95+ on Lighthouse.",
+      tags: ["PWA", "Service Workers", "IndexedDB", "React", "Webpack"],
+      demoLink: "https://pwa-example.ravikumarkatta.com",
+      githubLink: "https://github.com/ravikumarkatta/progressive-web-app",
       image: "/api/placeholder/600/300"
     }
   ];
 
   const skills = [
-    { name: "Frontend Development (React, JavaScript)", level: "advanced" },
-    { name: "AWS Cloud Services", level: "intermediate" },
-    { name: "Docker & Containerization", level: "intermediate" },
-    { name: "CI/CD Pipelines", level: "intermediate" },
-    { name: "Terraform & IaC", level: "beginner" },
-    { name: "UI/UX Design", level: "intermediate" }
+    { name: "Frontend Development (React, Next.js)", level: "expert" },
+    { name: "AWS Cloud Services & DevOps", level: "advanced" },
+    { name: "Backend Development (Node.js, Express)", level: "advanced" },
+    { name: "Docker & Containerization", level: "advanced" },
+    { name: "CI/CD & Automation", level: "advanced" },
+    { name: "Kubernetes & Container Orchestration", level: "intermediate" },
+    { name: "Terraform & IaC", level: "intermediate" },
+    { name: "Microservices Architecture", level: "intermediate" }
   ];
 
   const experience = [
     {
       year: "2023 - Present",
-      title: "Junior Cloud Engineer",
-      company: "TechStartup Inc.",
-      description: "Deployed and maintained cloud infrastructure on AWS, implemented CI/CD pipelines, and automated deployment processes."
+      title: "Senior Cloud Engineer",
+      company: "TechInnovate Solutions",
+      description: "Lead cloud infrastructure development using AWS, implemented microservices architecture, and automated CI/CD pipelines reducing deployment time by 75%."
     },
     {
       year: "2021 - 2023",
-      title: "Frontend Developer",
-      company: "Web Solutions Co.",
-      description: "Built responsive web applications using React, implemented modern UI designs, and integrated with backend APIs."
+      title: "Full Stack Developer",
+      company: "Digital Transformation Co.",
+      description: "Developed full-stack web applications using React and Node.js, implemented responsive UI designs, and integrated with various APIs and payment gateways."
     },
     {
       year: "2020 - 2021",
-      title: "Web Development Intern",
-      company: "Digital Agency",
-      description: "Assisted in creating landing pages and simple web applications using HTML, CSS, and JavaScript."
+      title: "Frontend Developer",
+      company: "Web Solutions Agency",
+      description: "Built responsive, accessible frontend interfaces using modern JavaScript frameworks, collaborated with UX designers, and optimized web performance."
+    }
+  ];
+
+  const services = [
+    {
+      icon: Globe,
+      title: "Web Development",
+      description: "Modern, responsive websites and web applications built with React, Next.js and cutting-edge frontend technologies."
+    },
+    {
+      icon: Server,
+      title: "Cloud Infrastructure",
+      description: "Scalable and secure AWS cloud infrastructure designed and implemented using infrastructure as code with Terraform."
+    },
+    {
+      icon: Code,
+      title: "Full Stack Development",
+      description: "End-to-end application development with React frontend and Node.js/Express backend services connected to various databases."
+    },
+    {
+      icon: Database,
+      title: "DevOps Implementation",
+      description: "CI/CD pipeline setup, containerization with Docker, and deployment automation to streamline development workflows."
     }
   ];
 
@@ -241,18 +322,25 @@ function App() {
         top: element.offsetTop - 80,
         behavior: 'smooth'
       });
+      setMobileMenuOpen(false);
     }
+  };
+
+  // Mobile menu toggle
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
       {/* Navigation Bar */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="font-bold text-xl text-indigo-600 dark:text-indigo-400">
-            Sam<span className="text-gray-800 dark:text-white">DevOps</span>
+            Ravi<span className="text-gray-800 dark:text-white">DevOps</span>
           </div>
           
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             {navItems.map(item => (
               <button 
@@ -278,6 +366,41 @@ function App() {
               <Download size={16} className="mr-2" />
               Resume
             </Button>
+            
+            {/* Mobile menu button */}
+            <button 
+              className="md:hidden p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+              onClick={toggleMobileMenu}
+              aria-label="Toggle menu"
+            >
+              <div className="w-6 flex flex-col items-end gap-1.5">
+                <span className={`block h-0.5 bg-gray-800 dark:bg-white transition-all duration-300 ${mobileMenuOpen ? 'w-6 translate-y-2 rotate-45' : 'w-6'}`}></span>
+                <span className={`block h-0.5 bg-gray-800 dark:bg-white transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : 'w-4'}`}></span>
+                <span className={`block h-0.5 bg-gray-800 dark:bg-white transition-all duration-300 ${mobileMenuOpen ? 'w-6 -translate-y-2 -rotate-45' : 'w-5'}`}></span>
+              </div>
+            </button>
+          </div>
+        </div>
+        
+        {/* Mobile Navigation Menu */}
+        <div 
+          className={`md:hidden fixed inset-0 z-50 bg-white dark:bg-gray-900 pt-20 px-6 transform transition-transform duration-300 ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        >
+          <div className="flex flex-col space-y-6">
+            {navItems.map(item => (
+              <button 
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className={`text-lg font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors ${activeSection === item.id ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-600 dark:text-gray-300'}`}
+              >
+                {item.label}
+              </button>
+            ))}
+            
+            <Button variant="primary" href="/resume.pdf" className="mt-6">
+              <Download size={16} className="mr-2" />
+              Resume
+            </Button>
           </div>
         </div>
       </nav>
@@ -287,14 +410,17 @@ function App() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 mb-10 md:mb-0">
             <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Ravi DevOps
+              Ravi <span className="text-gray-800 dark:text-white">DevOps</span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-6">
-              Cloud Engineer & Frontend Developer
-            </p>
+            <div className="flex items-center mb-6">
+              <div className="h-1 w-20 bg-indigo-600 mr-4"></div>
+              <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300">
+                Cloud Engineer & Full Stack Developer
+              </p>
+            </div>
             <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-lg">
-              Building modern web applications and cloud infrastructure solutions. 
-              Passionate about DevOps practices, automation, and creating seamless user experiences.
+              Building high-performance web applications and scalable cloud infrastructure. 
+              Specialized in DevOps practices, microservices architecture, and creating exceptional user experiences.
             </p>
             
             <div className="flex flex-wrap gap-4">
@@ -310,7 +436,7 @@ function App() {
               <a href="https://github.com/ravikumarkatta" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors">
                 <GitHub size={24} />
               </a>
-              <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors">
+              <a href="https://linkedin.com/in/ravikumarkatta" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors">
                 <Linkedin size={24} />
               </a>
               <a href="mailto:kattaravi000@gmail.com" className="text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors">
@@ -322,10 +448,28 @@ function App() {
           <div className="md:w-1/2 flex justify-center">
             <div className="relative">
               <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 animate-pulse absolute filter blur-3xl opacity-30"></div>
-              <div className="w-64 h-64 md:w-80 md:h-80 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden relative z-10">
-                <img src="/api/placeholder/320/320" alt="Sam" className="w-full h-full object-cover" />
+              <div className="w-64 h-64 md:w-80 md:h-80 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden relative z-10 border-4 border-white dark:border-gray-800 shadow-xl">
+                <img src="/api/placeholder/320/320" alt="Ravi" className="w-full h-full object-cover" />
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Services Section */}
+      <section className="py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">My Services</h2>
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              I specialize in delivering end-to-end solutions that combine modern web development with robust cloud infrastructure.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {services.map((service, index) => (
+              <ServiceCard key={index} {...service} />
+            ))}
           </div>
         </div>
       </section>
@@ -335,9 +479,13 @@ function App() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
             <div>
+              <div className="flex items-center mb-2">
+                <div className="h-1 w-12 bg-indigo-600 mr-3"></div>
+                <h2 className="text-sm text-indigo-600 dark:text-indigo-400 uppercase font-semibold tracking-wider">Portfolio</h2>
+              </div>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Projects</h2>
               <p className="text-gray-600 dark:text-gray-300 max-w-2xl">
-                A collection of my recent work showcasing my skills in frontend development, cloud engineering, and DevOps practices.
+                A showcase of my latest work demonstrating my expertise in full-stack development, cloud engineering, and DevOps practices.
               </p>
             </div>
             <Button variant="link" className="mt-4 md:mt-0">
@@ -359,7 +507,11 @@ function App() {
           <div className="grid md:grid-cols-2 gap-16">
             {/* Skills */}
             <div id="skills">
-              <h2 className="text-3xl font-bold mb-8">Skills & Expertise</h2>
+              <div className="flex items-center mb-2">
+                <div className="h-1 w-12 bg-indigo-600 mr-3"></div>
+                <h2 className="text-sm text-indigo-600 dark:text-indigo-400 uppercase font-semibold tracking-wider">Expertise</h2>
+              </div>
+              <h2 className="text-3xl font-bold mb-8">Skills & Technologies</h2>
               
               <div className="space-y-6">
                 {skills.map((skill, index) => (
@@ -370,8 +522,8 @@ function App() {
               <div className="mt-10">
                 <h3 className="font-bold text-xl mb-4">Technologies I work with:</h3>
                 <div className="flex flex-wrap gap-3">
-                  {['React', 'AWS', 'Docker', 'Git', 'JavaScript', 'Tailwind CSS', 'Node.js', 'Terraform', 'Jenkins', 'GitHub Actions'].map((tech, index) => (
-                    <span key={index} className="px-3 py-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-sm">
+                  {['React', 'Next.js', 'AWS', 'Docker', 'Kubernetes', 'Terraform', 'Node.js', 'Express', 'MongoDB', 'PostgreSQL', 'Redis', 'TypeScript', 'GraphQL', 'Jest', 'Cypress', 'GitHub Actions', 'Jenkins', 'Tailwind CSS'].map((tech, index) => (
+                    <span key={index} className="px-3 py-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-sm hover:border-indigo-500 dark:hover:border-indigo-400 transition-colors">
                       {tech}
                     </span>
                   ))}
@@ -381,6 +533,10 @@ function App() {
             
             {/* Experience */}
             <div id="experience">
+              <div className="flex items-center mb-2">
+                <div className="h-1 w-12 bg-indigo-600 mr-3"></div>
+                <h2 className="text-sm text-indigo-600 dark:text-indigo-400 uppercase font-semibold tracking-wider">Career</h2>
+              </div>
               <h2 className="text-3xl font-bold mb-8">Work Experience</h2>
               
               <div className="space-y-2">
@@ -398,69 +554,113 @@ function App() {
         </div>
       </section>
       
-      {/* About Me Section */}
-      <section id="about" className="py-20 px-6 bg-gray-100 dark:bg-gray-800/50">
+      {/* Achievements Section */}
+      <section className="py-20 px-6 bg-indigo-50 dark:bg-indigo-900/10">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row gap-12">
-            <div className="md:w-1/3">
-              <div className="sticky top-24">
-                <div className="rounded-xl overflow-hidden mb-6">
-                  <img src="/api/placeholder/400/600" alt="About Sam" className="w-full object-cover" />
-                </div>
-                
-                <div className="flex justify-center space-x-4">
-                  <Button variant="secondary" href="https://github.com/ravikumarkatta" icon={<GitHub size={16} />}>
-                    GitHub
-                  </Button>
-                  <Button variant="secondary" href="https://linkedin.com/in/yourusername" icon={<Linkedin size={16} />}>
-                    LinkedIn
-                  </Button>
-                </div>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Achievements & Certifications</h2>
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Continuous learning and professional growth through certifications and practical achievements.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="text-center hover:border-indigo-500 transition-colors">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
+                <Award size={32} />
+              </div>
+              <h3 className="text-xl font-bold mb-2">AWS Certified Solutions Architect</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-2">
+                Amazon Web Services • 2023
+              </p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Advanced design and deployment of AWS infrastructure.
+              </p>
+            </Card>
+            
+            <Card className="text-center hover:border-indigo-500 transition-colors">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
+                <Award size={32} />
+              </div>
+              // Continuing from where it left off in the app-jsx.js file...
+
+              <h3 className="text-xl font-bold mb-2">Certified Kubernetes Administrator</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-2">
+                Cloud Native Computing Foundation • 2022
+              </p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Expert-level knowledge in Kubernetes deployment and management.
+              </p>
+            </Card>
+            
+            <Card className="text-center hover:border-indigo-500 transition-colors">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
+                <Award size={32} />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Terraform Associate</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-2">
+                HashiCorp • 2023
+              </p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Infrastructure as Code implementation using Terraform.
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+      
+      {/* About Me Section */}
+      <section id="about" className="py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="flex items-center mb-2">
+                <div className="h-1 w-12 bg-indigo-600 mr-3"></div>
+                <h2 className="text-sm text-indigo-600 dark:text-indigo-400 uppercase font-semibold tracking-wider">About</h2>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">A bit about me</h2>
+              
+              <div className="space-y-4 text-gray-600 dark:text-gray-300">
+                <p>
+                  I'm a Cloud Engineer and Full Stack Developer with over 5 years of experience building scalable web applications and cloud infrastructure.
+                </p>
+                <p>
+                  My journey in tech started with frontend development, where I developed a passion for creating intuitive user experiences. As I evolved in my career, I ventured into DevOps practices and cloud technologies, allowing me to build complete solutions from infrastructure to user interface.
+                </p>
+                <p>
+                  Today, I specialize in designing and implementing modern applications using microservices architecture, containerization, and cloud-native technologies. I'm passionate about automation, infrastructure as code, and creating efficient CI/CD pipelines.
+                </p>
+                <p>
+                  When I'm not coding, I enjoy contributing to open source projects, writing technical blogs, and mentoring junior developers.
+                </p>
+              </div>
+              
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Button onClick={() => scrollToSection('contact')}>
+                  Get in touch
+                </Button>
+                <Button variant="outline" href="/resume.pdf">
+                  <Download size={16} className="mr-2" />
+                  Resume
+                </Button>
               </div>
             </div>
             
-            <div className="md:w-2/3">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">About Me</h2>
-              
-              <div className="prose prose-lg dark:prose-invert">
-                <p>
-                  I'm an aspiring Cloud Engineer with a strong frontend development background, currently focused on AWS and DevOps practices.
-                </p>
-                <p>
-                  My journey began in web development, where I built responsive and user-friendly interfaces using modern JavaScript frameworks. 
-                  This experience gave me a deep appreciation for creating seamless user experiences and efficient code.
-                </p>
-                <p>
-                  As I grew in my career, I became fascinated with cloud technologies and the DevOps philosophy. 
-                  I've since been learning and implementing AWS services, containerization with Docker, and infrastructure as code using Terraform.
-                </p>
-                <p>
-                  I believe in continuous learning and improvement, which is why I built this portfolio to demonstrate not only my technical skills 
-                  but also my ability to quickly adapt to new technologies and solve complex problems.
-                </p>
-                <p>
-                  When I'm not coding or learning about new technologies, you can find me hiking, reading tech blogs, or experimenting with home automation projects.
-                </p>
+            <div className="relative">
+              <div className="w-full h-96 bg-gray-200 dark:bg-gray-700 rounded-xl overflow-hidden relative z-10 border-2 border-white dark:border-gray-800 shadow-2xl transform md:rotate-3 hover:rotate-0 transition-transform duration-300">
+                <img src="/api/placeholder/600/400" alt="About me" className="w-full h-full object-cover" />
               </div>
-              
-              <div className="mt-10">
-                <h3 className="text-xl font-bold mb-4">Education</h3>
-                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                  <p className="font-semibold">Bachelor of Science in Computer Science</p>
-                  <p className="text-gray-600 dark:text-gray-300">SIMATS UNIVERSITY • 2016-2020</p>
-                </div>
-              </div>
-              
-              <div className="mt-10">
-                <h3 className="text-xl font-bold mb-4">Certifications</h3>
-                <div className="space-y-4">
-                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                    <p className="font-semibold">AWS Certified Cloud Practitioner</p>
-                    <p className="text-gray-600 dark:text-gray-300">Amazon Web Services • 2023</p>
+              <div className="absolute bottom-4 right-4 z-20 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 max-w-xs transform hover:scale-105 transition-transform duration-300">
+                <p className="text-gray-600 dark:text-gray-300 italic">
+                  "I believe in continuous learning and staying updated with the latest technologies to deliver innovative solutions."
+                </p>
+                <div className="flex items-center mt-4">
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 mr-3">
+                    <img src="/api/placeholder/40/40" alt="Ravi" className="w-full h-full object-cover" />
                   </div>
-                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                    <p className="font-semibold">Certified Kubernetes Administrator</p>
-                    <p className="text-gray-600 dark:text-gray-300">Cloud Native Computing Foundation • 2022</p>
+                  <div>
+                    <h4 className="font-medium">Ravi Kumar Katta</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Cloud Engineer</p>
                   </div>
                 </div>
               </div>
@@ -469,133 +669,352 @@ function App() {
         </div>
       </section>
       
-      {/* Contact Section */}
-      <section id="contact" className="py-20 px-6">
+      {/* Testimonials Section */}
+      <section className="py-20 px-6 bg-gray-100 dark:bg-gray-800/50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Get In Touch</h2>
-            <p className="text-gray-600 dark:text-gray-300 max-w-lg mx-auto">
-              Interested in working together or have a question? Feel free to reach out to me!
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">What Clients Say</h2>
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Here's what people I've worked with have to say about my expertise and work ethic.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-12">
-            <Card>
-              <h3 className="text-xl font-bold mb-6">Send Me a Message</h3>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Name
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder="Your name"
-                  />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="hover:scale-105 transition-transform">
+              <div className="flex mb-4">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <svg 
+                    key={star} 
+                    className="w-5 h-5 text-yellow-400" 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+              <p className="text-gray-600 dark:text-gray-300 mb-6 italic">
+                "Ravi was exceptional in developing our cloud infrastructure. His expertise in AWS and microservices architecture significantly improved our application's performance and scalability."
+              </p>
+              <div className="flex items-center">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 mr-4">
+                  <img src="/api/placeholder/48/48" alt="Client" className="w-full h-full object-cover" />
                 </div>
-                
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Email
-                  </label>
-                  <input 
-                    type="email" 
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder="your.email@example.com"
-                  />
+                  <h4 className="font-bold">Michael Thompson</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">CTO, TechStart Inc.</p>
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Message
-                  </label>
-                  <textarea 
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white min-h-32"
-                    placeholder="Your message..."
-                  ></textarea>
-                </div>
-                
-                <Button className="w-full">Send Message</Button>
               </div>
             </Card>
             
+            <Card className="hover:scale-105 transition-transform">
+              <div className="flex mb-4">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <svg 
+                    key={star} 
+                    className="w-5 h-5 text-yellow-400" 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+              <p className="text-gray-600 dark:text-gray-300 mb-6 italic">
+                "Working with Ravi on our e-commerce platform was a game-changer. His full-stack skills and attention to detail delivered an exceptional user experience that increased our conversion rates."
+              </p>
+              <div className="flex items-center">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 mr-4">
+                  <img src="/api/placeholder/48/48" alt="Client" className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h4 className="font-bold">Sarah Johnson</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Product Manager, RetailFlow</p>
+                </div>
+              </div>
+            </Card>
+            
+            <Card className="hover:scale-105 transition-transform">
+              <div className="flex mb-4">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <svg 
+                    key={star} 
+                    className="w-5 h-5 text-yellow-400" 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+              <p className="text-gray-600 dark:text-gray-300 mb-6 italic">
+                "Ravi's expertise in CI/CD pipelines and DevOps practices revolutionized our development workflow. Our deployment time was reduced by 80%, and our team's productivity increased significantly."
+              </p>
+              <div className="flex items-center">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 mr-4">
+                  <img src="/api/placeholder/48/48" alt="Client" className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h4 className="font-bold">David Chen</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Engineering Lead, CloudSoft Solutions</p>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+      
+      {/* Blog Section (Optional) */}
+      <section className="py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
             <div>
-              <h3 className="text-xl font-bold mb-6">Contact Information</h3>
+              <div className="flex items-center mb-2">
+                <div className="h-1 w-12 bg-indigo-600 mr-3"></div>
+                <h2 className="text-sm text-indigo-600 dark:text-indigo-400 uppercase font-semibold tracking-wider">Insights</h2>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Latest Articles</h2>
+              <p className="text-gray-600 dark:text-gray-300 max-w-2xl">
+                Technical insights and industry trends. Sharing knowledge and experiences from my journey in cloud engineering and web development.
+              </p>
+            </div>
+            <Button variant="link" className="mt-4 md:mt-0">
+              View all articles <ExternalLink size={16} className="ml-1" />
+            </Button>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="overflow-hidden group">
+              <div className="h-48 mb-4 overflow-hidden">
+                <img 
+                  src="/api/placeholder/600/300" 
+                  alt="Blog post" 
+                  className="w-full h-full object-cover object-center group-hover:scale-110 transition-all duration-500"
+                />
+              </div>
+              <span className="text-sm text-gray-500 dark:text-gray-400">May 10, 2023</span>
+              <h3 className="text-xl font-bold my-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                Building Scalable Microservices with Kubernetes
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                A comprehensive guide to designing and implementing scalable microservices architecture using Kubernetes.
+              </p>
+              <Button variant="link">
+                Read more <ExternalLink size={16} className="ml-1" />
+              </Button>
+            </Card>
+            
+            <Card className="overflow-hidden group">
+              <div className="h-48 mb-4 overflow-hidden">
+                <img 
+                  src="/api/placeholder/600/300" 
+                  alt="Blog post" 
+                  className="w-full h-full object-cover object-center group-hover:scale-110 transition-all duration-500"
+                />
+              </div>
+              <span className="text-sm text-gray-500 dark:text-gray-400">April 25, 2023</span>
+              <h3 className="text-xl font-bold my-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                Modern CI/CD Pipelines for Frontend Applications
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                Learn how to set up efficient CI/CD pipelines for modern frontend applications using GitHub Actions.
+              </p>
+              <Button variant="link">
+                Read more <ExternalLink size={16} className="ml-1" />
+              </Button>
+            </Card>
+            
+            <Card className="overflow-hidden group">
+              <div className="h-48 mb-4 overflow-hidden">
+                <img 
+                  src="/api/placeholder/600/300" 
+                  alt="Blog post" 
+                  className="w-full h-full object-cover object-center group-hover:scale-110 transition-all duration-500"
+                />
+              </div>
+              <span className="text-sm text-gray-500 dark:text-gray-400">March 12, 2023</span>
+              <h3 className="text-xl font-bold my-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                Infrastructure as Code: Best Practices with Terraform
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                Dive into infrastructure as code concepts and learn best practices for managing cloud resources with Terraform.
+              </p>
+              <Button variant="link">
+                Read more <ExternalLink size={16} className="ml-1" />
+              </Button>
+            </Card>
+          </div>
+        </div>
+      </section>
+      
+      {/* Contact Section */}
+      <section id="contact" className="py-20 px-6 bg-indigo-50 dark:bg-indigo-900/10">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12">
+            <div>
+              <div className="flex items-center mb-2">
+                <div className="h-1 w-12 bg-indigo-600 mr-3"></div>
+                <h2 className="text-sm text-indigo-600 dark:text-indigo-400 uppercase font-semibold tracking-wider">Contact</h2>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">Get In Touch</h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-lg">
+                Have a project in mind or want to discuss potential opportunities? I'm always open to new challenges and collaborations.
+              </p>
               
               <div className="space-y-6">
-                <div className="flex items-start">
-                  <Mail className="mr-4 text-indigo-600 dark:text-indigo-400" />
+                <div className="flex items-start space-x-4">
+                  <div className="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                    <Mail size={24} className="text-indigo-600 dark:text-indigo-400" />
+                  </div>
                   <div>
-                    <p className="font-medium">Email</p>
-                    <a href="mailto:kattaravi000@gmail.com" className="text-indigo-600 dark:text-indigo-400 hover:underline">
-                      kattaravi000@gmail.com
-                    </a>
+                    <h3 className="font-semibold text-lg mb-1">Email</h3>
+                    <p className="text-gray-600 dark:text-gray-300">kattaravi000@gmail.com</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start">
-                  <Linkedin className="mr-4 text-indigo-600 dark:text-indigo-400" />
+                <div className="flex items-start space-x-4">
+                  <div className="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                    <Linkedin size={24} className="text-indigo-600 dark:text-indigo-400" />
+                  </div>
                   <div>
-                    <p className="font-medium">LinkedIn</p>
-                    <a href="https://linkedin.com/in/yourusername" className="text-indigo-600 dark:text-indigo-400 hover:underline">
-                      linkedin.com/in/ravikumarkatta
-                    </a>
+                    <h3 className="font-semibold text-lg mb-1">LinkedIn</h3>
+                    <p className="text-gray-600 dark:text-gray-300">linkedin.com/in/ravikumarkatta</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start">
-                  <GitHub className="mr-4 text-indigo-600 dark:text-indigo-400" />
+                <div className="flex items-start space-x-4">
+                  <div className="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                    <GitHub size={24} className="text-indigo-600 dark:text-indigo-400" />
+                  </div>
                   <div>
-                    <p className="font-medium">GitHub</p>
-                    <a href="https://github.com/ravikumarkatta" className="text-indigo-600 dark:text-indigo-400 hover:underline">
-                      github.com/ravikumarkatta
-                    </a>
+                    <h3 className="font-semibold text-lg mb-1">GitHub</h3>
+                    <p className="text-gray-600 dark:text-gray-300">github.com/ravikumarkatta</p>
                   </div>
                 </div>
               </div>
-              
-              <div className="mt-12">
-                <h3 className="text-xl font-bold mb-6">Availability</h3>
-                <div className="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-900 rounded-lg p-4">
-                  <p className="text-indigo-800 dark:text-indigo-300">
-                    I'm currently <span className="font-bold">available</span> for freelance work and open to new opportunities.
-                  </p>
-                </div>
-              </div>
+            </div>
+            
+            <div>
+              <Card className="shadow-lg">
+                <h3 className="text-xl font-bold mb-6">Send a Message</h3>
+                
+                <form className="space-y-6">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
+                    <input 
+                      type="text" 
+                      id="name" 
+                      placeholder="Your name" 
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                    <input 
+                      type="email" 
+                      id="email" 
+                      placeholder="Your email" 
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Subject</label>
+                    <input 
+                      type="text" 
+                      id="subject" 
+                      placeholder="Project discussion, job opportunity, etc." 
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message</label>
+                    <textarea 
+                      id="message" 
+                      rows="4" 
+                      placeholder="Tell me about your project or inquiry..." 
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    ></textarea>
+                  </div>
+                  
+                  <Button>
+                    Send Message
+                  </Button>
+                </form>
+              </Card>
             </div>
           </div>
         </div>
       </section>
       
       {/* Footer */}
-      <footer className="py-10 px-6 bg-gray-100 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
-          <div className="text-center md:text-left mb-6 md:mb-0">
-            <div className="font-bold text-xl text-indigo-600 dark:text-indigo-400 mb-2">
-              RAVI<span className="text-gray-800 dark:text-white">DevOps</span>
+      <footer className="py-12 px-6 bg-gray-800 dark:bg-gray-900">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="md:col-span-2">
+              <div className="font-bold text-xl text-indigo-400 mb-4">
+                Ravi<span className="text-white">DevOps</span>
+              </div>
+              <p className="text-gray-300 mb-6 max-w-md">
+                Cloud Engineer & Full Stack Developer specializing in modern web applications, cloud infrastructure, and DevOps practices.
+              </p>
+              <div className="flex space-x-4">
+                <a href="https://github.com/ravikumarkatta" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                  <GitHub size={20} />
+                </a>
+                <a href="https://linkedin.com/in/ravikumarkatta" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                  <Linkedin size={20} />
+                </a>
+                <a href="mailto:kattaravi000@gmail.com" className="text-gray-400 hover:text-white transition-colors">
+                  <Mail size={20} />
+                </a>
+              </div>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 text-sm">
-              Cloud Engineer & Frontend Developer
-            </p>
+            
+            <div>
+              <h3 className="text-white font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                {navItems.map(item => (
+                  <li key={item.id}>
+                    <button 
+                      onClick={() => scrollToSection(item.id)}
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      {item.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-white font-semibold mb-4">Services</h3>
+              <ul className="space-y-2">
+                <li>
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors">Web Development</a>
+                </li>
+                <li>
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors">Cloud Infrastructure</a>
+                </li>
+                <li>
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors">DevOps Implementation</a>
+                </li>
+                <li>
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors">Full Stack Development</a>
+                </li>
+              </ul>
+            </div>
           </div>
           
-          <div className="flex space-x-8">
-            {navItems.map(item => (
-              <button 
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className="text-sm text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors"
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-          
-          <div className="mt-6 md:mt-0">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              © {new Date().getFullYear()} Ravi DevOps. All rights reserved.
+          <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-400 text-sm mb-4 md:mb-0">
+              &copy; {new Date().getFullYear()} Ravi Kumar Katta. All rights reserved.
             </p>
+            <div className="text-gray-400 text-sm">
+              Designed and developed with ❤️
+            </div>
           </div>
         </div>
       </footer>
