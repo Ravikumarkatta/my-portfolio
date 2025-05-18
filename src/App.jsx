@@ -215,7 +215,8 @@ function App() {
       tags: ["React", "Next.js", "Stripe", "MongoDB", "Tailwind CSS"],
       demoLink: "https://ecommerce-ravi.vercel.app",
       githubLink: "https://github.com/ravikumarkatta/ecommerce-platform",
-      image: "/api/placeholder/600/300"
+      image: "https://gizmodo.com/dalle-midjourney-imagine-with-meta-playground-ai-test-1851078719"
+
     },
     {
       title: "AWS Serverless API",
@@ -223,7 +224,8 @@ function App() {
       tags: ["AWS Lambda", "DynamoDB", "API Gateway", "Serverless", "CI/CD"],
       demoLink: "https://api-docs.example.com",
       githubLink: "https://github.com/ravikumarkatta/serverless-api",
-      image: "/api/placeholder/600/300"
+      image: "https://gizmodo.com/dalle-midjourney-imagine-with-meta-playground-ai-test-1851078719"
+
     },
     {
       title: "Real-time Chat Application",
@@ -231,7 +233,8 @@ function App() {
       tags: ["WebSockets", "React", "Node.js", "MongoDB", "Socket.io"],
       demoLink: "https://chat-app.ravikumarkatta.com",
       githubLink: "https://github.com/ravikumarkatta/real-time-chat",
-      image: "/api/placeholder/600/300"
+      image: "https://gizmodo.com/dalle-midjourney-imagine-with-meta-playground-ai-test-1851078719"
+
     },
     {
       title: "CI/CD Pipeline Dashboard",
@@ -239,7 +242,8 @@ function App() {
       tags: ["React", "Docker", "Jenkins", "GitHub Actions", "GraphQL"],
       demoLink: "https://devops-dashboard.example.com",
       githubLink: "https://github.com/ravikumarkatta/cicd-dashboard",
-      image: "/api/placeholder/600/300"
+      image: "https://gizmodo.com/dalle-midjourney-imagine-with-meta-playground-ai-test-1851078719"
+
     },
     {
       title: "Microservices Architecture",
@@ -247,7 +251,7 @@ function App() {
       tags: ["Kubernetes", "Docker", "Microservices", "ELK Stack", "Go"],
       demoLink: "https://microservices-demo.example.com",
       githubLink: "https://github.com/ravikumarkatta/microservices-demo",
-      image: "/api/placeholder/600/300"
+      image: "https://wallpaperaccess.com/full/5651999.jpg"
     },
     {
       title: "Progressive Web App",
@@ -255,7 +259,7 @@ function App() {
       tags: ["PWA", "Service Workers", "IndexedDB", "React", "Webpack"],
       demoLink: "https://pwa-example.ravikumarkatta.com",
       githubLink: "https://github.com/ravikumarkatta/progressive-web-app",
-      image: "/api/placeholder/600/300"
+      image: "/images/5651990.jpg"
     }
   ];
 
