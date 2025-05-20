@@ -702,7 +702,7 @@ function App() {
               </p>
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 mr-4">
-                  <img src="/api/placeholder/48/48" alt="Client" className="w-full h-full object-cover" />
+                  <img src="public/images/Michael-Thompson.jpg" alt="Client" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h4 className="font-bold">Michael Thompson</h4>
@@ -729,7 +729,7 @@ function App() {
               </p>
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 mr-4">
-                  <img src="/api/placeholder/48/48" alt="Client" className="w-full h-full object-cover" />
+                  <img src="public/images/sarah.jpg" alt="Client" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h4 className="font-bold">Sarah Johnson</h4>
@@ -756,7 +756,7 @@ function App() {
               </p>
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 mr-4">
-                  <img src="/api/placeholder/48/48" alt="Client" className="w-full h-full object-cover" />
+                  <img src="public/images/david.jpeg" alt="Client" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h4 className="font-bold">David Chen</h4>
@@ -1014,7 +1014,7 @@ function App() {
           
           <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
-              &copy; {new Date().getFullYear()} Ravi Kumar Katta. All rights reserved.
+              &copy; {new Date().getFullYear()} RAVI. All rights reserved.
             </p>
             <div className="text-gray-400 text-sm">
               Designed and developed with ❤️
